@@ -128,36 +128,6 @@ svg { display: block; }
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* ─── ONLINE BADGE ─────────────────────────────── */
-.online-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.15);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #22c55e;
-    margin-left: 6px;
-    white-space: nowrap;
-    cursor: default;
-    user-select: none;
-}
-.online-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #22c55e;
-    animation: pulse 2s infinite;
-}
-.online-count { font-variant-numeric: tabular-nums; }
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
 /* ─── MENU TOGGLE ──────────────────────────────── */
 .menu-toggle {
     display: none;
@@ -532,6 +502,11 @@ svg { display: block; }
     background: #22c55e;
     margin-right: 8px;
     animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
 }
 
 /* ─── FOOTER ───────────────────────────────────── */
@@ -911,12 +886,6 @@ svg { display: block; }
         text-align: center;
         padding: 12px;
         font-size: 1rem;
-    }
-
-    .online-badge {
-        margin: 8px auto 0;
-        padding: 6px 14px;
-        font-size: 0.8rem;
     }
 
     .menu-toggle { display: flex; }

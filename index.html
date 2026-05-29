@@ -22,10 +22,10 @@
     <!-- Icon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 
-    <!-- Config: API URL — поменяй на свой бэкенд при деплое -->
+    <!-- Supabase Config — вставь свои данные из Settings → API -->
     <script>
-        window.API_BASE_URL = window.API_BASE_URL || 'http://localhost:3001';
-        window.WS_URL       = window.WS_URL       || 'ws://localhost:3001/ws';
+        window.SUPABASE_URL    = 'https://YOUR_PROJECT.supabase.co';
+        window.SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
     </script>
 </head>
 <body>
@@ -44,11 +44,6 @@
                 <a href="#services" class="nav-link">Услуги</a>
                 <a href="#prices" class="nav-link">Цены</a>
                 <a href="#contact" class="nav-link">Контакты</a>
-                <!-- Онлайн-счётчик (только для админов) -->
-                <span class="online-badge" id="onlineBadge" style="display:none">
-                    <span class="online-dot"></span>
-                    <span class="online-count" id="onlineCount">0</span>
-                </span>
             </nav>
             <button class="menu-toggle" id="menuToggle" aria-label="Меню">
                 <span></span><span></span><span></span>
@@ -335,13 +330,15 @@
         <div class="modal">
             <div class="modal-header">
                 <span class="modal-icon">🔐</span>
-                <h3>Доступ к админ-панели</h3>
+                <h3>Вход в админ-панель</h3>
                 <button class="modal-close" id="loginModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="modal-desc">Введите пароль для входа в админ-панель.</p>
+                <p class="modal-desc">Введи email и пароль от Supabase Auth.</p>
+                <input class="modal-input" id="loginEmail" type="email"
+                       placeholder="Email" autocomplete="email" spellcheck="false">
                 <input class="modal-input" id="loginPassword" type="password"
-                       placeholder="Пароль" autocomplete="off" spellcheck="false">
+                       placeholder="Пароль" autocomplete="current-password">
                 <p class="modal-error" id="loginError"></p>
                 <button class="btn btn-primary modal-btn" id="loginSubmit">Войти</button>
             </div>
@@ -373,14 +370,10 @@
         </div>
 
         <div class="admin-section">
-            <h3>📊 Статистика</h3>
+            <h3>📊 Статус</h3>
             <div class="admin-stat">
-                <span>Сейчас на сайте</span>
-                <span id="adminOnlineCount">0</span>
-            </div>
-            <div class="admin-stat">
-                <span>Статус API</span>
-                <span id="adminApiStatus">⚠ Проверка...</span>
+                <span>База данных</span>
+                <span id="adminDbStatus">⏳</span>
             </div>
             <div class="admin-stat">
                 <span>Версия</span>
