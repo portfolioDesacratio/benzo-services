@@ -130,7 +130,7 @@
     </section>
 
     <!-- ===== ЦЕНЫ ===== -->
-    <section class="section section-dark" id="prices">
+    <section class="section" id="prices">
         <div class="container">
             <div class="section-header">
                 <span class="section-badge">Прайс</span>
@@ -145,7 +145,7 @@
                         <span class="price-icon">🆔</span>
                         <h3>П4сп0рт (ск4н)</h3>
                     </div>
-                    <div class="price-amount">$25</div>
+                    <div class="price-amount"><span data-live="price_passport_scan">$25</span></div>
                     <ul class="price-features">
                         <li>Скан-копия паспорта</li>
                         <li>РФ, Казахстан, Беларусь, Украина</li>
@@ -158,7 +158,7 @@
                         <span class="price-icon">📖</span>
                         <h3>П4сп0рт (бум4г4)</h3>
                     </div>
-                    <div class="price-amount">$200</div>
+                    <div class="price-amount"><span data-live="price_passport_paper">$200</span></div>
                     <ul class="price-features">
                         <li>Физический бумажный носитель</li>
                         <li>Полное соответствие оригиналу</li>
@@ -171,7 +171,7 @@
                         <span class="price-icon">📜</span>
                         <h3>Пр4в4 (ск4н/ф0т0)</h3>
                     </div>
-                    <div class="price-amount">$30</div>
+                    <div class="price-amount"><span data-live="price_rights_scan">$30</span></div>
                     <ul class="price-features">
                         <li>Скан или фото прав</li>
                         <li>Любые категории (A, B, C, D)</li>
@@ -184,7 +184,7 @@
                         <span class="price-icon">📦</span>
                         <h3>Пр4в4 (д0ст4вк4)</h3>
                     </div>
-                    <div class="price-amount">$45</div>
+                    <div class="price-amount"><span data-live="price_rights_delivery">$45</span></div>
                     <ul class="price-features">
                         <li>Физический носитель прав</li>
                         <li>С доставкой</li>
@@ -197,7 +197,7 @@
                         <span class="price-icon">💳</span>
                         <h3>К4рт4 (ф0т0)</h3>
                     </div>
-                    <div class="price-amount">$10</div>
+                    <div class="price-amount"><span data-live="price_card_photo">$10</span></div>
                     <ul class="price-features">
                         <li>Фото или скан карты</li>
                         <li>Любой банк</li>
@@ -210,7 +210,7 @@
                         <span class="price-icon">💳</span>
                         <h3>К4рт4 (физик4)</h3>
                     </div>
-                    <div class="price-amount">$20</div>
+                    <div class="price-amount"><span data-live="price_card_physical">$20</span></div>
                     <ul class="price-features">
                         <li>Физическая карта</li>
                         <li>С доставкой</li>
@@ -223,7 +223,7 @@
                         <span class="price-icon">📄</span>
                         <h3>К0нсульт4ция</h3>
                     </div>
-                    <div class="price-amount">$5</div>
+                    <div class="price-amount"><span data-live="price_consultation">$5</span></div>
                     <ul class="price-features">
                         <li>Консультация</li>
                         <li>Полная анонимность</li>
@@ -270,7 +270,7 @@
     </section>
 
     <!-- ===== КОНТАКТЫ ===== -->
-    <section class="section section-dark" id="contact">
+    <section class="section" id="contact">
         <div class="container">
             <div class="section-header">
                 <span class="section-badge">Контакты</span>
@@ -393,6 +393,39 @@
             <input class="admin-field" data-config-key="telegram" placeholder="Telegram" value="@murderirl">
             <input class="admin-field" data-config-key="channel" placeholder="Канал" value="@god_benzo">
             <button class="admin-save">Сохранить</button>
+        </div>
+
+        <div class="admin-section" data-config="prices">
+            <h3>💰 Цены</h3>
+            <div class="admin-price-row">
+                <label>Паспорт (скан)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_passport_scan" placeholder="$" value="$25">
+            </div>
+            <div class="admin-price-row">
+                <label>Паспорт (бумага)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_passport_paper" placeholder="$" value="$200">
+            </div>
+            <div class="admin-price-row">
+                <label>Права (скан/фото)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_rights_scan" placeholder="$" value="$30">
+            </div>
+            <div class="admin-price-row">
+                <label>Права (доставка)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_rights_delivery" placeholder="$" value="$45">
+            </div>
+            <div class="admin-price-row">
+                <label>Карта (фото)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_card_photo" placeholder="$" value="$10">
+            </div>
+            <div class="admin-price-row">
+                <label>Карта (физика)</label>
+                <input class="admin-field admin-price-field" data-config-key="price_card_physical" placeholder="$" value="$20">
+            </div>
+            <div class="admin-price-row">
+                <label>Консультация</label>
+                <input class="admin-field admin-price-field" data-config-key="price_consultation" placeholder="$" value="$5">
+            </div>
+            <button class="admin-save">Сохранить цены</button>
         </div>
 
         <div class="admin-section">

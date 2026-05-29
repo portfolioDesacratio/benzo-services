@@ -107,6 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.textContent = val;
                 el.dataset.copy = val;
                 el.href = `https://t.me/${u}`;
+            } else if (key.startsWith('price_')) {
+                // Format as $XX
+                const clean = val.replace(/[^0-9]/g, '');
+                const formatted = clean ? `$${clean}` : val;
+                el.textContent = formatted;
+                // Also update the admin field if open
+                const adminField = document.querySelector(`[data-config-key="${key}"]`);
+                if (adminField) adminField.value = formatted;
             } else {
                 el.textContent = val;
             }
@@ -158,12 +166,19 @@ document.addEventListener('DOMContentLoaded', () => {
     (function particles() {
         const canvas = document.getElementById('particles');
         if (!canvas) return;
+
+        // Respect reduced motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            canvas.style.display = 'none';
+            return;
+        }
+
         const ctx = canvas.getContext('2d');
         let w, h, particles = [];
-        const COUNT = Math.min(90, Math.floor(window.innerWidth / 12));
-        const CONNECT_DIST = 180;
-        const SPEED = 0.3;
-        const LINE_OPACITY = 0.15;
+        const COUNT = Math.min(120, Math.floor(window.innerWidth / 10));
+        const CONNECT_DIST = 200;
+        const SPEED = 0.4;
+        const LINE_OPACITY = 0.35;
 
         function resize() {
             w = canvas.width = window.innerWidth;
@@ -180,8 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const a = Math.random() * Math.PI * 2;
                 this.vx = Math.cos(a) * SPEED + (Math.random() - 0.5) * SPEED * 0.5;
                 this.vy = Math.sin(a) * SPEED + (Math.random() - 0.5) * SPEED * 0.5;
-                this.s = Math.random() * 3 + 1.5;
-                this.b = Math.random() * 0.5 + 0.5;
+                this.s = Math.random() * 3.5 + 2;
+                this.b = Math.random() * 0.6 + 0.4;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -191,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(139, 92, 246, ${this.b})`;
-                ctx.shadowColor = 'rgba(139, 92, 246, 0.4)';
-                ctx.shadowBlur = 6;
+                ctx.shadowColor = 'rgba(139, 92, 246, 0.6)';
+                ctx.shadowBlur = 10;
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
@@ -211,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         ctx.strokeStyle = `rgba(139, 92, 246, ${(1 - d / CONNECT_DIST) * LINE_OPACITY})`;
-                        ctx.lineWidth = 0.8;
+                        ctx.lineWidth = 1.2;
                         ctx.stroke();
                     }
                 }
