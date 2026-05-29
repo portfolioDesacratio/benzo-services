@@ -330,10 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminDbStatus = document.getElementById('adminDbStatus');
 
     function updateAdminUI() {
-        const loggedIn = isLoggedIn();
-        adminToggle.style.display = loggedIn ? 'flex' : 'none';
+        // Кнопка ⚙ всегда видна
+        adminToggle.style.display = 'flex';
 
-        if (loggedIn) {
+        if (isLoggedIn()) {
             const s = getSession();
             const email = s?.user?.email || 'Админ';
             adminUserName.textContent = `👋 ${email}`;

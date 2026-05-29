@@ -839,7 +839,6 @@ svg { display: block; }
 }
 
 .admin-toggle {
-    display: none; /* shown via JS when admin logged in */
     position: fixed;
     bottom: 24px;
     left: 24px;
