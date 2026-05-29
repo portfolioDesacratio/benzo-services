@@ -394,15 +394,6 @@ svg { display: block; }
     border-color: rgba(139, 92, 246, 0.3);
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(109, 40, 217, 0.05));
 }
-.price-card.featured::before {
-    content: '★ Рекомендуем';
-    position: absolute;
-    top: 10px; right: 12px;
-    color: var(--accent);
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
 
 .price-card-header { margin-bottom: 16px; }
 .price-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
@@ -954,10 +945,7 @@ svg { display: block; }
     .modal { margin: 0 8px; }
     .modal-header { padding: 20px 20px 0; }
     .modal-body { padding: 16px 20px 24px; }
-    .price-card.featured::before {
-        font-size: 0.55rem;
-        top: 8px; right: 8px;
-    }
+
 }
 
 /* Landscape phones */
