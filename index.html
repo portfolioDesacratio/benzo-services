@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#08080e">
     <meta name="color-scheme" content="dark">
     <meta name="description" content="Услуги Бензо — профессиональные услуги.">
     <meta name="author" content="Бензо">
@@ -11,16 +11,27 @@
 
     <title>Услуги Бензо</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Icon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+
+    <!-- Config: API URL — поменяй на свой бэкенд при деплое -->
+    <script>
+        window.API_BASE_URL = window.API_BASE_URL || 'http://localhost:3001';
+        window.WS_URL       = window.WS_URL       || 'ws://localhost:3001/ws';
+    </script>
 </head>
 <body>
 
     <!-- ===== ЧАСТИЦЫ ===== -->
-    <canvas id="particles"></canvas>
+    <canvas id="particles" aria-hidden="true"></canvas>
 
     <!-- ===== ХЕДЕР ===== -->
     <header class="header" id="header">
@@ -33,6 +44,11 @@
                 <a href="#services" class="nav-link">Услуги</a>
                 <a href="#prices" class="nav-link">Цены</a>
                 <a href="#contact" class="nav-link">Контакты</a>
+                <!-- Онлайн-счётчик (только для админов) -->
+                <span class="online-badge" id="onlineBadge" style="display:none">
+                    <span class="online-dot"></span>
+                    <span class="online-count" id="onlineCount">0</span>
+                </span>
             </nav>
             <button class="menu-toggle" id="menuToggle" aria-label="Меню">
                 <span></span><span></span><span></span>
@@ -67,31 +83,31 @@
             <div class="services-grid">
 
                 <!-- Паспорта -->
-                <div class="service-card">
+                <div class="service-card reveal">
                     <div class="service-icon">🆔</div>
-                    <h3 class="service-title">П0дд3лк4 п4сп0рт0в</h3>
+                    <h3 class="service-title">П4сп0рт4 и уд0ст0в3р3ния</h3>
                     <p class="service-desc">Изг0т0вл3ни3 к4ч3ств3нных к0пий и 0ригин4л0в уд0ст0в3р3ний личн0сти</p>
                     <ul class="service-list">
                         <li>РФ, Казахстан, Беларусь, Украина</li>
-                        <li>Скан-копия: от $25</li>
-                        <li>Бумажный оригинал: от $200</li>
+                        <li>Скан/фото: от $30</li>
+                        <li>С доставкой: от $45</li>
                     </ul>
                 </div>
 
                 <!-- Права / ТК -->
-                <div class="service-card">
+                <div class="service-card reveal">
                     <div class="service-icon">📜</div>
                     <h3 class="service-title">В0дит3льски3 пр4в4 и ТК</h3>
                     <p class="service-desc">Изг0т0вл3ни3 в0дит3льских уд0ст0в3р3ний и труд0вых книж3к</p>
                     <ul class="service-list">
                         <li>Любые категории (A, B, C, D)</li>
                         <li>Трудовая книжка РФ</li>
-                        <li>Высокое качество, проверка по базам</li>
+                        <li>Скан/фото: $30, с доставкой: $45</li>
                     </ul>
                 </div>
 
                 <!-- Карты -->
-                <div class="service-card">
+                <div class="service-card reveal">
                     <div class="service-icon">💳</div>
                     <h3 class="service-title">Б4нк0вски3 к4рты</h3>
                     <p class="service-desc">Изг0т0вл3ни3 к4рт различных б4нк0в и платёжных систем</p>
@@ -103,7 +119,7 @@
                 </div>
 
                 <!-- Консультации -->
-                <div class="service-card">
+                <div class="service-card reveal">
                     <div class="service-icon">📄</div>
                     <h3 class="service-title">К0нсульт4ции</h3>
                     <p class="service-desc">П0др0бны3 к0нсульт4ции п0 в0пр0с4м д0кум3нт00б0р0т4</p>
@@ -129,36 +145,36 @@
 
             <div class="prices-grid">
 
-                <div class="price-card">
+                <div class="price-card reveal">
                     <div class="price-card-header">
                         <span class="price-icon">🆔</span>
-                        <h3>П4сп0рт (ск4н)</h3>
+                        <h3>Д0кум3нт (ск4н/ф0т0)</h3>
                     </div>
-                    <div class="price-amount">$25</div>
+                    <div class="price-amount">$30</div>
                     <ul class="price-features">
-                        <li>Скан-копия паспорта</li>
-                        <li>РФ, Казахстан, Беларусь, Украина</li>
-                        <li>Высокое разрешение</li>
+                        <li>Скан-копия или фото</li>
+                        <li>Паспорт / Права / ТК</li>
+                        <li>Высокое качество</li>
                     </ul>
                 </div>
 
-                <div class="price-card featured">
+                <div class="price-card featured reveal">
                     <div class="price-card-header">
-                        <span class="price-icon">📖</span>
-                        <h3>П4сп0рт (бум4г4)</h3>
+                        <span class="price-icon">📦</span>
+                        <h3>Д0кум3нт (д0ст4вк4)</h3>
                     </div>
-                    <div class="price-amount">$200</div>
+                    <div class="price-amount">$45</div>
                     <ul class="price-features">
-                        <li>Физический бумажный носитель</li>
-                        <li>Полное соответствие оригиналу</li>
-                        <li>Все страны под заказ</li>
+                        <li>Физический носитель</li>
+                        <li>Полное соответствие</li>
+                        <li>Конфиденциальная доставка</li>
                     </ul>
                 </div>
 
-                <div class="price-card">
+                <div class="price-card reveal">
                     <div class="price-card-header">
                         <span class="price-icon">💳</span>
-                        <h3>К4рт4 (фото)</h3>
+                        <h3>К4рт4 (ф0т0)</h3>
                     </div>
                     <div class="price-amount">$10</div>
                     <ul class="price-features">
@@ -168,42 +184,29 @@
                     </ul>
                 </div>
 
-                <div class="price-card">
+                <div class="price-card reveal">
                     <div class="price-card-header">
                         <span class="price-icon">💳</span>
                         <h3>К4рт4 (физик4)</h3>
                     </div>
                     <div class="price-amount">$20</div>
                     <ul class="price-features">
-                        <li>Физическая карта с доставкой</li>
-                        <li>Любой банк</li>
+                        <li>Физическая карта</li>
+                        <li>С доставкой</li>
                         <li>Конфиденциально</li>
                     </ul>
                 </div>
 
-                <div class="price-card">
+                <div class="price-card reveal">
                     <div class="price-card-header">
                         <span class="price-icon">📄</span>
                         <h3>К0нсульт4ция</h3>
                     </div>
                     <div class="price-amount">$5</div>
                     <ul class="price-features">
-                        <li>Консультация по вопросам</li>
+                        <li>Консультация</li>
                         <li>Полная анонимность</li>
                         <li>Индивидуальный подход</li>
-                    </ul>
-                </div>
-
-                <div class="price-card">
-                    <div class="price-card-header">
-                        <span class="price-icon">📜</span>
-                        <h3>Пр4в4 / ТК</h3>
-                    </div>
-                    <div class="price-amount">договорная</div>
-                    <ul class="price-features">
-                        <li>Водительские права</li>
-                        <li>Трудовая книжка</li>
-                        <li>Уточняйте в Telegram</li>
                     </ul>
                 </div>
 
@@ -221,22 +224,22 @@
             </div>
 
             <div class="features-grid">
-                <div class="feature-item">
+                <div class="feature-item reveal">
                     <div class="feature-icon">🔒</div>
                     <h4>Анонимность</h4>
                     <p>Полная конфиденциальность. Мы не храним данные о клиентах.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item reveal">
                     <div class="feature-icon">⚡</div>
                     <h4>Скорость</h4>
                     <p>Минимальные сроки выполнения. Срочные заказы от 24 часов.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item reveal">
                     <div class="feature-icon">✅</div>
                     <h4>Качество</h4>
                     <p>Гарантируем качество. Бесплатная доработка при необходимости.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-item reveal">
                     <div class="feature-icon">📅</div>
                     <h4>График</h4>
                     <p>Приём заказов: ПН, СР, ПТ. В эти дни отвечаем оперативно.</p>
@@ -255,19 +258,23 @@
             </div>
 
             <div class="contact-grid">
-                <div class="contact-card" id="contactCard">
+                <div class="contact-card reveal" id="contactCard">
                     <div class="contact-icon">✉️</div>
                     <h4>Telegram</h4>
-                    <a href="https://t.me/murderirl" class="contact-value" id="contactTelegram" data-live="telegram" data-copy="@murderirl" target="_blank" rel="noopener">@murderirl</a>
+                    <a href="https://t.me/murderirl" class="contact-value" id="contactTelegram"
+                       data-live="telegram" data-copy="@murderirl"
+                       target="_blank" rel="noopener">@murderirl</a>
                     <p class="contact-hint">Напишите в Telegram для связи</p>
                 </div>
-                <div class="contact-card">
+                <div class="contact-card reveal">
                     <div class="contact-icon">📢</div>
                     <h4>Канал</h4>
-                    <a href="https://t.me/god_benzo" class="contact-value" id="channelLink" data-live="channel" data-copy="@god_benzo" target="_blank" rel="noopener">@god_benzo</a>
+                    <a href="https://t.me/god_benzo" class="contact-value" id="channelLink"
+                       data-live="channel" data-copy="@god_benzo"
+                       target="_blank" rel="noopener">@god_benzo</a>
                     <p class="contact-hint">Подпишитесь на канал</p>
                 </div>
-                <div class="contact-card">
+                <div class="contact-card reveal">
                     <div class="contact-icon">📊</div>
                     <h4>Статус</h4>
                     <div class="contact-status">
@@ -310,69 +317,83 @@
         </div>
     </footer>
 
-    <!-- ===== БАННЕР-ПРИВЕТСТВИЕ (снизу, на 5 сек) ===== -->
-    <div class="greeting-banner" id="greeting-banner" data-duration="5000">
+    <!-- ===== БАННЕР-ПРИВЕТСТВИЕ ===== -->
+    <div class="greeting-banner" id="greetingBanner" data-duration="5000">
         <div class="greeting-banner-content">
             <span class="greeting-icon">🛡️</span>
-            <span class="greeting-text" data-live="greeting_text">Приветствуем на <strong>Услуги Бензо</strong>! Ознакомьтесь с нашими услугами.</span>
+            <span class="greeting-text" data-live="greeting_text">
+                Приветствуем на <strong>Услуги Бензо</strong>! Ознакомьтесь с нашими услугами.
+            </span>
         </div>
     </div>
 
     <!-- ===== TOAST ===== -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== LOGIN MODAL ===== -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-icon">🔐</span>
+                <h3>Доступ к админ-панели</h3>
+                <button class="modal-close" id="loginModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Введите пароль для входа в админ-панель.</p>
+                <input class="modal-input" id="loginPassword" type="password"
+                       placeholder="Пароль" autocomplete="off" spellcheck="false">
+                <p class="modal-error" id="loginError"></p>
+                <button class="btn btn-primary modal-btn" id="loginSubmit">Войти</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== ADMIN PANEL ===== -->
-    <button class="admin-toggle" id="adminToggle" title="Админ-панель">⚙</button>
+    <button class="admin-toggle" id="adminToggle" title="Админ-панель" style="display:none">⚙</button>
 
     <div class="admin-panel" id="adminPanel">
-        <h2>⚙️ Админ-панель</h2>
+        <div class="admin-panel-header">
+            <h2>⚙️ Админ-панель</h2>
+            <span class="admin-user" id="adminUserName"></span>
+        </div>
 
         <div class="admin-section" data-config="hero">
-            <h3>🧑‍💻 Hero / Приветствие</h3>
-            <input class="admin-field" data-config-key="greeting_text" placeholder="Текст приветствия" value="Приветствуем на <strong>Услуги Бензо</strong>! Ознакомьтесь с нашими услугами.">
-            <button class="admin-save">Сохранить секцию</button>
+            <h3>🧑‍💻 Приветствие</h3>
+            <input class="admin-field" data-config-key="greeting_text"
+                   placeholder="Текст приветствия"
+                   value="Приветствуем на <strong>Услуги Бензо</strong>! Ознакомьтесь с нашими услугами.">
+            <button class="admin-save">Сохранить</button>
         </div>
 
         <div class="admin-section" data-config="contact">
             <h3>📞 Контакты</h3>
-            <input class="admin-field" data-config-key="telegram" placeholder="Telegram username" value="@murderirl">
-            <input class="admin-field" data-config-key="channel" placeholder="Telegram channel" value="@god_benzo">
-            <button class="admin-save">Сохранить секцию</button>
+            <input class="admin-field" data-config-key="telegram" placeholder="Telegram" value="@murderirl">
+            <input class="admin-field" data-config-key="channel" placeholder="Канал" value="@god_benzo">
+            <button class="admin-save">Сохранить</button>
         </div>
 
         <div class="admin-section">
             <h3>📊 Статистика</h3>
             <div class="admin-stat">
-                <span>Услуг</span>
-                <span>4</span>
+                <span>Сейчас на сайте</span>
+                <span id="adminOnlineCount">0</span>
             </div>
             <div class="admin-stat">
-                <span>Ценовых позиций</span>
-                <span>6</span>
+                <span>Статус API</span>
+                <span id="adminApiStatus">⚠ Проверка...</span>
             </div>
             <div class="admin-stat">
-                <span>Статус</span>
-                <span>✅ Активен</span>
-            </div>
-            <div class="admin-stat">
-                <span>График</span>
-                <span>ПН / СР / ПТ</span>
+                <span>Версия</span>
+                <span>2.0</span>
             </div>
         </div>
 
         <div class="admin-section">
-            <h3>ℹ️ О сайте</h3>
-            <div class="admin-stat">
-                <span>Версия</span>
-                <span>1.0</span>
-            </div>
-            <div class="admin-stat">
-                <span>Сборка</span>
-                <span>2026-05-29</span>
-            </div>
+            <button class="admin-logout" id="adminLogout">🚪 Выйти</button>
         </div>
     </div>
 
+    <!-- ===== СКРИПТЫ ===== -->
     <script src="index.js"></script>
 </body>
 </html>

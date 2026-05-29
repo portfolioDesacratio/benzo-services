@@ -1,16 +1,22 @@
 /* ============================================
    Услуги Бензо — JavaScript
+   API + WebSocket + Админ-панель + UI
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ---- Particles (Enhanced: яркие линии-паутинки) ----
+    // ─── CONFIG ──────────────────────────────────
+    const API = window.API_BASE_URL || 'http://localhost:3001';
+    const WS_URL = window.WS_URL || 'ws://localhost:3001/ws';
+    const SESSION_KEY = 'benzo_admin_session';
+
+    // ─── PARTICLES ───────────────────────────────
     (function particles() {
         const canvas = document.getElementById('particles');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         let w, h, particles = [];
-        const COUNT = 90;
+        const COUNT = Math.min(90, Math.floor(window.innerWidth / 12));
         const CONNECT_DIST = 180;
         const SPEED = 0.3;
         const LINE_OPACITY = 0.15;
@@ -80,9 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     })();
 
-    // ---- Mobile menu toggle ----
-    const menuToggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav');
+    // ─── MOBILE MENU ─────────────────────────────
+    const menuToggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('nav');
     if (menuToggle && nav) {
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
@@ -96,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- Header scroll state ----
+    // ─── HEADER SCROLL ────────────────────────────
     const header = document.querySelector('.header');
     if (header) {
         let ticking = false;
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- Scroll reveal animations ----
+    // ─── SCROLL REVEAL ────────────────────────────
     const revealElements = document.querySelectorAll('.reveal');
     if (revealElements.length) {
         const observer = new IntersectionObserver((entries) => {
@@ -121,26 +127,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
         revealElements.forEach(el => observer.observe(el));
     }
 
-    // ---- Greeting banner (auto-hide after 6s) ----
-    const greetingBanner = document.getElementById('greeting-banner');
+    // ─── GREETING BANNER ──────────────────────────
+    const greetingBanner = document.getElementById('greetingBanner');
     if (greetingBanner) {
-        const showDuration = parseInt(greetingBanner.dataset.duration) || 6000;
-        setTimeout(() => {
-            greetingBanner.classList.add('show');
-        }, 2000);
-        setTimeout(() => {
-            greetingBanner.classList.remove('show');
-        }, 2000 + showDuration);
+        const showDuration = parseInt(greetingBanner.dataset.duration) || 5000;
+        setTimeout(() => greetingBanner.classList.add('show'), 2000);
+        setTimeout(() => greetingBanner.classList.remove('show'), 2000 + showDuration);
     }
 
-    // ---- Toast notifications ----
-    window.showToast = function (message, duration) {
-        duration = duration || 3000;
-        const container = document.querySelector('.toast-container');
+    // ─── TOAST ────────────────────────────────────
+    window.showToast = function (message, duration = 3000) {
+        const container = document.getElementById('toastContainer');
         if (!container) return;
         const toast = document.createElement('div');
         toast.className = 'toast';
@@ -153,113 +153,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }, duration);
     };
 
-    // ---- Admin panel toggle ----
-    const adminBtn = document.getElementById('adminToggle');
-    const adminPanel = document.getElementById('adminPanel');
-    if (adminBtn && adminPanel) {
-        adminBtn.addEventListener('click', () => {
-            adminPanel.classList.toggle('open');
-            adminBtn.textContent = adminPanel.classList.contains('open') ? '✕' : '⚙';
-        });
-    }
-
-    // ---- Admin panel: load & save config ----
-    const adminStates = {};
-    let adminConfig = {};
-
-    const adminSections = document.querySelectorAll('.admin-section[data-config]');
-    adminSections.forEach(section => {
-        const key = section.dataset.config;
-        adminConfig[key] = {};
-        section.querySelectorAll('[data-config-key]').forEach(el => {
-            const fieldKey = el.dataset.configKey;
-            adminConfig[key][fieldKey] = el.value || el.textContent;
-        });
-    });
-
-    // Load from localStorage if available
-    const savedConfig = localStorage.getItem('benzo_admin_config');
-    if (savedConfig) {
-        try {
-            const parsed = JSON.parse(savedConfig);
-            Object.keys(parsed).forEach(sectionKey => {
-                if (adminConfig[sectionKey]) {
-                    Object.assign(adminConfig[sectionKey], parsed[sectionKey]);
-                }
-            });
-        } catch (e) { /* ignore */ }
-    }
-
-    function applyAdminConfig() {
-        document.querySelectorAll('[data-config-key]').forEach(el => {
-            const sectionKey = el.closest('[data-config]')?.dataset.config;
-            const fieldKey = el.dataset.configKey;
-            if (sectionKey && adminConfig[sectionKey] && adminConfig[sectionKey][fieldKey] !== undefined) {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.value = adminConfig[sectionKey][fieldKey];
-                } else {
-                    el.textContent = adminConfig[sectionKey][fieldKey];
-                }
-            }
-        });
-    }
-    applyAdminConfig();
-
-    // Apply config to live fields on save
-    document.querySelectorAll('.admin-save').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const section = btn.closest('.admin-section');
-            if (!section) return;
-            const sectionKey = section.dataset.config;
-            if (!sectionKey) return;
-
-            section.querySelectorAll('[data-config-key]').forEach(el => {
-                const fieldKey = el.dataset.configKey;
-                const val = el.value || el.textContent;
-                if (adminConfig[sectionKey]) {
-                    adminConfig[sectionKey][fieldKey] = val;
-                }
-            // Update live DOM
-            const liveEl = document.querySelector(`[data-live="${fieldKey}"]`);
-            if (liveEl) {
-                if (fieldKey === 'greeting_text') {
-                    liveEl.innerHTML = val.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-                } else if (fieldKey === 'telegram' || fieldKey === 'channel') {
-                    const username = val.replace('@', '');
-                    liveEl.textContent = val;
-                    liveEl.setAttribute('data-copy', val);
-                    if (fieldKey === 'telegram') {
-                        liveEl.href = `https://t.me/${username}`;
-                    } else if (fieldKey === 'channel') {
-                        liveEl.href = `https://t.me/${username}`;
-                    }
-                } else {
-                    liveEl.textContent = val;
-                }
-            }
-            });
-
-            localStorage.setItem('benzo_admin_config', JSON.stringify(adminConfig));
-            showToast('✅ Настройки сохранены');
-        });
-    });
-
-    // ---- Copy to clipboard ----
+    // ─── CLIPBOARD ────────────────────────────────
     document.querySelectorAll('.contact-value').forEach(el => {
         el.addEventListener('click', async () => {
             const text = el.dataset.copy || el.textContent;
             try {
                 await navigator.clipboard.writeText(text);
-                const original = el.textContent;
+                const orig = el.textContent;
                 el.textContent = '✓ Скопировано!';
-                setTimeout(() => { el.textContent = original; }, 1500);
+                setTimeout(() => { el.textContent = orig; }, 1500);
             } catch {
                 showToast('❌ Не удалось скопировать');
             }
         });
     });
 
-    // ---- Smooth scroll for anchor links ----
+    // ─── SMOOTH SCROLL ────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', e => {
             const href = anchor.getAttribute('href');
@@ -272,7 +181,373 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    console.log('%c Услуги Бензо 🚀', 'font-size:24px; font-weight:bold; color:#8b5cf6');
-    console.log('%c Связь: @murderirl | Канал: @god_benzo', 'font-size:14px; color:#9090a8');
+    // ═══════════════════════════════════════════════
+    // ─── CONFIG FROM API ──────────────────────────
+    // ═══════════════════════════════════════════════
+
+    async function fetchConfig() {
+        try {
+            const res = await fetch(`${API}/api/config`);
+            if (!res.ok) throw new Error('Network error');
+            return await res.json();
+        } catch {
+            return null;
+        }
+    }
+
+    function applyConfig(config) {
+        if (!config) return;
+        for (const [key, val] of Object.entries(config)) {
+            const liveEl = document.querySelector(`[data-live="${key}"]`);
+            if (!liveEl) continue;
+
+            if (key === 'greeting_text') {
+                liveEl.innerHTML = val.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            } else if (key === 'telegram' || key === 'channel') {
+                const username = val.replace('@', '');
+                liveEl.textContent = val;
+                liveEl.setAttribute('data-copy', val);
+                liveEl.href = `https://t.me/${username}`;
+            } else {
+                liveEl.textContent = val;
+            }
+        }
+    }
+
+    // Load config from API
+    fetchConfig().then(cfg => {
+        if (cfg) applyConfig(cfg);
+    });
+
+    // ═══════════════════════════════════════════════
+    // ─── ADMIN AUTH ────────────────────────────────
+    // ═══════════════════════════════════════════════
+
+    const adminToggle = document.getElementById('adminToggle');
+    const adminPanel = document.getElementById('adminPanel');
+    const loginModal = document.getElementById('loginModal');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginError = document.getElementById('loginError');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const loginModalClose = document.getElementById('loginModalClose');
+    const adminLogout = document.getElementById('adminLogout');
+    const adminUserName = document.getElementById('adminUserName');
+    const onlineBadge = document.getElementById('onlineBadge');
+    const onlineCount = document.getElementById('onlineCount');
+    const adminOnlineCount = document.getElementById('adminOnlineCount');
+    const adminApiStatus = document.getElementById('adminApiStatus');
+
+    let adminSession = null;
+
+    // Load session from sessionStorage
+    try {
+        const saved = sessionStorage.getItem(SESSION_KEY);
+        if (saved) adminSession = JSON.parse(saved);
+    } catch {}
+
+    function isAdmin() {
+        return adminSession && adminSession.token;
+    }
+
+    function saveSession(session) {
+        adminSession = session;
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    }
+
+    function clearSession() {
+        adminSession = null;
+        sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    async function verifySession() {
+        if (!adminSession?.token) return false;
+        try {
+            const res = await fetch(`${API}/api/auth/verify`, {
+                headers: { Authorization: `Bearer ${adminSession.token}` }
+            });
+            const data = await res.json();
+            if (data.valid) {
+                adminSession.adminName = data.adminName;
+                saveSession(adminSession);
+                return true;
+            }
+        } catch {}
+        clearSession();
+        return false;
+    }
+
+    async function login(password) {
+        try {
+            const res = await fetch(`${API}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            const data = await res.json();
+            if (data.token) {
+                saveSession(data);
+                return true;
+            }
+            loginError.textContent = data.error || 'Неверный пароль';
+            return false;
+        } catch {
+            loginError.textContent = '❌ Сервер недоступен';
+            return false;
+        }
+    }
+
+    // ─── ADMIN UI STATE ───────────────────────────
+
+    function updateAdminUI() {
+        const admin = isAdmin();
+
+        // Admin toggle button visibility
+        adminToggle.style.display = admin ? 'flex' : 'none';
+
+        // Online badge visibility
+        onlineBadge.style.display = admin ? 'inline-flex' : 'none';
+
+        // Admin panel user name
+        if (admin && adminSession?.adminName) {
+            adminUserName.textContent = `👋 ${adminSession.adminName}`;
+        }
+
+        // API status in admin panel
+        if (admin && adminApiStatus) {
+            adminApiStatus.textContent = '✅ Онлайн';
+            adminApiStatus.style.color = '#22c55e';
+        }
+    }
+
+    function openAdminPanel() {
+        adminPanel.classList.add('open');
+        adminToggle.textContent = '✕';
+        // Load current config into admin fields
+        fetchConfig().then(cfg => {
+            if (!cfg) return;
+            document.querySelectorAll('[data-config-key]').forEach(el => {
+                const sectionKey = el.closest('[data-config]')?.dataset.config;
+                const fieldKey = el.dataset.configKey;
+                if (sectionKey && cfg[fieldKey] !== undefined) {
+                    el.value = cfg[fieldKey];
+                }
+            });
+        });
+    }
+
+    function closeAdminPanel() {
+        adminPanel.classList.remove('open');
+        adminToggle.textContent = '⚙';
+    }
+
+    // ─── ADMIN TOGGLE ─────────────────────────────
+
+    adminToggle.addEventListener('click', async () => {
+        if (adminPanel.classList.contains('open')) {
+            closeAdminPanel();
+            return;
+        }
+
+        if (!isAdmin()) {
+            showLoginModal();
+            return;
+        }
+
+        // Verify session is still valid
+        const valid = await verifySession();
+        if (!valid) {
+            showLoginModal();
+            return;
+        }
+
+        openAdminPanel();
+    });
+
+    // ─── LOGIN MODAL ──────────────────────────────
+
+    function showLoginModal() {
+        loginModal.classList.add('active');
+        loginPassword.value = '';
+        loginError.textContent = '';
+        setTimeout(() => loginPassword.focus(), 100);
+    }
+
+    function hideLoginModal() {
+        loginModal.classList.remove('active');
+    }
+
+    loginSubmit.addEventListener('click', async () => {
+        const pw = loginPassword.value.trim();
+        if (!pw) { loginError.textContent = 'Введите пароль'; return; }
+
+        loginSubmit.disabled = true;
+        loginSubmit.textContent = '⏳ Проверка...';
+
+        const ok = await login(pw);
+
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = 'Войти';
+
+        if (ok) {
+            hideLoginModal();
+            updateAdminUI();
+            openAdminPanel();
+            showToast(`✅ Добро пожаловать, ${adminSession.adminName}!`);
+        }
+    });
+
+    loginPassword.addEventListener('keydown', e => {
+        if (e.key === 'Enter') loginSubmit.click();
+    });
+
+    loginModalClose.addEventListener('click', hideLoginModal);
+    loginModal.addEventListener('click', e => {
+        if (e.target === loginModal) hideLoginModal();
+    });
+
+    // ─── LOGOUT ───────────────────────────────────
+
+    adminLogout.addEventListener('click', () => {
+        clearSession();
+        closeAdminPanel();
+        updateAdminUI();
+        showToast('👋 Вы вышли из админ-панели');
+    });
+
+    // ═══════════════════════════════════════════════
+    // ─── ADMIN PANEL SAVE ─────────────────────────
+    // ═══════════════════════════════════════════════
+
+    document.querySelectorAll('.admin-save').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const section = btn.closest('.admin-section');
+            if (!section) return;
+            const sectionKey = section.dataset.config;
+            if (!sectionKey || !isAdmin()) return;
+
+            const payload = {};
+            section.querySelectorAll('[data-config-key]').forEach(el => {
+                const fieldKey = el.dataset.configKey;
+                payload[fieldKey] = el.value;
+            });
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Сохранение...';
+
+            try {
+                const res = await fetch(`${API}/api/config`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${adminSession.token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    applyConfig(data.config);
+                    showToast('✅ Настройки сохранены для всех!');
+                } else {
+                    showToast('❌ Ошибка сохранения');
+                }
+            } catch {
+                showToast('❌ Сервер недоступен');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Сохранить';
+        });
+    });
+
+    // ═══════════════════════════════════════════════
+    // ─── WEB SOCKET (ONLINE COUNT) ────────────────
+    // ═══════════════════════════════════════════════
+
+    function connectWS() {
+        let ws;
+        let reconnectTimer;
+
+        function connect() {
+            try {
+                ws = new WebSocket(WS_URL);
+            } catch {
+                scheduleReconnect();
+                return;
+            }
+
+            ws.onopen = () => {
+                console.log('🔌 WS connected');
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'online_count') {
+                        const count = data.count;
+                        if (onlineCount) onlineCount.textContent = count;
+                        if (adminOnlineCount) adminOnlineCount.textContent = count;
+                    }
+                } catch {}
+            };
+
+            ws.onclose = () => {
+                console.log('🔌 WS disconnected');
+                scheduleReconnect();
+            };
+
+            ws.onerror = () => {
+                ws.close();
+            };
+        }
+
+        function scheduleReconnect() {
+            if (reconnectTimer) clearTimeout(reconnectTimer);
+            reconnectTimer = setTimeout(connect, 5000);
+        }
+
+        connect();
+
+        // Return cleanup
+        return () => {
+            if (reconnectTimer) clearTimeout(reconnectTimer);
+            if (ws) ws.close();
+        };
+    }
+
+    // Start WS
+    const disconnectWS = connectWS();
+
+    // ═══════════════════════════════════════════════
+    // ─── INIT ─────────────────────────────────────
+    // ═══════════════════════════════════════════════
+
+    (async function init() {
+        // Verify existing session
+        if (isAdmin()) {
+            const valid = await verifySession();
+            if (!valid) clearSession();
+        }
+        updateAdminUI();
+
+        // If admin is logged in, auto-open panel? No, just show the button.
+        // Update API status in admin panel
+        if (adminApiStatus) {
+            try {
+                const res = await fetch(`${API}/api/health`);
+                const data = await res.json();
+                if (data.ok) {
+                    adminApiStatus.textContent = '✅ Онлайн';
+                    adminApiStatus.style.color = '#22c55e';
+                }
+            } catch {
+                adminApiStatus.textContent = '❌ Офлайн';
+                adminApiStatus.style.color = '#ef4444';
+            }
+        }
+    })();
+
+    console.log('%c🛡️  Услуги Бензо v2.0', 'font-size:24px; font-weight:bold; color:#8b5cf6');
+    console.log('%c   API: ' + API, 'font-size:12px; color:#9090a8');
+    console.log('%c   WS : ' + WS_URL, 'font-size:12px; color:#9090a8');
 
 });
